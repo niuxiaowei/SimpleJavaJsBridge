@@ -350,3 +350,4 @@ SimpleJavaJsBridge库在js与java的通信中带来以下优点：
 若你动心了可以下载试用:[SimpleJavaJsBridge](https://github.com/niuxiaowei/SimpleJavaJsBridge.git)
 
 参考：大头鬼的[https://github.com/lzyzsd/JsBridge.git](https://github.com/lzyzsd/JsBridge.git)
+
