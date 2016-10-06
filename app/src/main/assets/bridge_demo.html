@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>bridge demo</title>
+    <!--<style media="screen">-->
+    <!--button{-->
+    <!--width: 140px;-->
+    <!--height: 70px;-->
+    <!--color: #333;-->
+    <!--font-size: 39px;-->
+    <!--font-weight: bold;-->
+    <!--}-->
+    <!--#wrap > div {-->
+    <!--height: 2.5rem;-->
+    <!--background-color: #f9f9f9;-->
+    <!--margin: 10px;-->
+    <!--padding: 0 15px;-->
+    <!--line-height: 2.5rem;-->
+    <!--}-->
+    <!--</style>-->
+</head>
+<body>
+    <div id="wrap">
+        <button type="button" name="button"  onclick="test()">调用native的test(string)接口</button>
+        <button type="button" name="button"  onclick="test1()">调用native的test1(Person)接口</button>
+        <button type="button" name="button"  onclick="test2()">调用native的test2(Person)接口</button>
+        <button type="button" name="button"  onclick="test3()">调用native的test3(String,person)接口</button>
+        <button type="button" name="button"  onclick="test4()">调用native的test4无参接口</button>
+
+
+        <div id="result" ></div>
+    </div>
+    <script src="file:///android_asset/js_native_bridge.js"></script>
+    <script src="file:///android_asset/bridge.js"></script>
+    <script type="text/javascript">
+
+
+        function showResult(data,interfaceName){
+            var result=document.getElementById("result");
+            if(data == null){
+                result.innerHTML = "正在请求native方法......";
+            }else{
+
+                result.innerHTML = "调用native的"+interfaceName+"方法   native返回结果="+JSON.stringify(data);
+            }
+        }
+
+        function test() {
+         showResult();
+         JsBridge.test({},function( data) {
+             showResult(data,'test');
+             if (data.status == 1) {
+                 console.log('"test" bridge called success; res:' + JSON.stringify(data));
+             }else{
+                 console.log('"test" bridge called faild; res:' + JSON.stringify(data));
+             }
+         });
+
+     }
+
+     function test1() {
+         showResult();
+         JsBridge.test1({},function( data) {
+             showResult(data,'test1');
+             if (data.status == 1) {
+                 console.log('"test" bridge called success; res:' + JSON.stringify(data));
+             }else{
+                 console.log('"test" bridge called faild; res:' + JSON.stringify(data));
+             }
+         });
+
+     }
+
+     function test2() {
+        showResult();
+        JsBridge.test2({},function( data) {
+            showResult(data,'test2');
+            if (data.status == 1) {
+                console.log('"test" bridge called success; res:' + JSON.stringify(data));
+            }else{
+                console.log('"test" bridge called faild; res:' + JSON.stringify(data));
+            }
+        });
+
+    }
+
+    function test3() {
+        showResult();
+        JsBridge.test3({},function( data) {
+            showResult(data,'test3');
+            if (data.status == 1) {
+                console.log('"test" bridge called success; res:' + JSON.stringify(data));
+            }else{
+                console.log('"test" bridge called faild; res:' + JSON.stringify(data));
+            }
+        });
+
+    }
+
+    function test4() {
+        showResult();
+        JsBridge.test4({},function( data) {
+            showResult(data,'test4');
+            if (data.status == 1) {
+                console.log('"test" bridge called success; res:' + JSON.stringify(data));
+            }else{
+                console.log('"test" bridge called faild; res:' + JSON.stringify(data));
+            }
+        });
+
+    }
+
+</script>
+</body>
+</html>
