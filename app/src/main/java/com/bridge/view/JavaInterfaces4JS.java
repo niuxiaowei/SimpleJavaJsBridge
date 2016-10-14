@@ -1,14 +1,11 @@
 package com.bridge.view;
 
-import android.app.Activity;
-import android.widget.Toast;
 
-
-import com.bridge.jsbridge.annotation.JavaInterface4JS;
-import com.bridge.jsbridge.annotation.ParamCallback;
-import com.bridge.jsbridge.annotation.Param;
-import com.bridge.jsbridge.annotation.ParamResponseStatus;
 import com.bridge.view.fragment.WebViewFragment;
+import com.simplejsjavabridge.lib.annotation.JavaInterface4JS;
+import com.simplejsjavabridge.lib.annotation.Param;
+import com.simplejsjavabridge.lib.annotation.ParamCallback;
+import com.simplejsjavabridge.lib.annotation.ParamResponseStatus;
 
 
 /**

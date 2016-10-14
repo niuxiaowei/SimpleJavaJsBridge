@@ -1,4 +1,4 @@
-package com.bridge.jsbridge;
+package com.simplejsjavabridge.lib;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,7 +13,6 @@ import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
-
 
 import java.io.BufferedReader;
 import java.io.IOException;

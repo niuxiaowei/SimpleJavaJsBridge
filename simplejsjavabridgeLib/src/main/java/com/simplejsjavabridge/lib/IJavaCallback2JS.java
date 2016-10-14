@@ -1,4 +1,4 @@
-package com.bridge.jsbridge;
+package com.simplejsjavabridge.lib;
 
 /**
  * 凡是为js提供的回调都必须继承该接口

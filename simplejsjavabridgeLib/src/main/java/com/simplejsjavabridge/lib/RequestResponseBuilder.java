@@ -1,4 +1,4 @@
-package com.bridge.jsbridge;
+package com.simplejsjavabridge.lib;
 
 import android.text.TextUtils;
 

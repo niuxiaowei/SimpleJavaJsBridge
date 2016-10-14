@@ -1,4 +1,4 @@
-package com.bridge.jsbridge.annotation;
+package com.simplejsjavabridge.lib.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

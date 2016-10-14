@@ -1,11 +1,12 @@
-package com.bridge.jsbridge;
+package com.simplejsjavabridge.lib;
 
 import android.text.TextUtils;
 
-import com.bridge.jsbridge.annotation.ParamCallback;
-import com.bridge.jsbridge.annotation.Param;
-import com.bridge.jsbridge.annotation.ParamResponseStatus;
-import com.bridge.jsbridge.exception.SimpleJSBridgeException;
+
+import com.simplejsjavabridge.lib.annotation.Param;
+import com.simplejsjavabridge.lib.annotation.ParamCallback;
+import com.simplejsjavabridge.lib.annotation.ParamResponseStatus;
+import com.simplejsjavabridge.lib.exception.SimpleJSBridgeException;
 
 import org.json.JSONException;
 import org.json.JSONObject;

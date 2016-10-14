@@ -17,13 +17,14 @@ import android.widget.TextView;
 
 
 import com.bridge.R;
-import com.bridge.jsbridge.IJavaCallback2JS;
-import com.bridge.jsbridge.SimpleJavaJsBridge;
-import com.bridge.jsbridge.annotation.ParamResponseStatus;
+
 import com.bridge.view.JavaInterfaces4JS;
 import com.bridge.view.IInvokeJS;
-import com.bridge.jsbridge.annotation.JavaCallback4JS;
-import com.bridge.jsbridge.annotation.Param;
+import com.simplejsjavabridge.lib.IJavaCallback2JS;
+import com.simplejsjavabridge.lib.SimpleJavaJsBridge;
+import com.simplejsjavabridge.lib.annotation.JavaCallback4JS;
+import com.simplejsjavabridge.lib.annotation.Param;
+import com.simplejsjavabridge.lib.annotation.ParamResponseStatus;
 
 
 /**
@@ -112,7 +113,7 @@ public class WebViewFragment extends Fragment {
                 invokeJS.exam("你好啊js", 7,new IJavaCallback2JS() {
 
                     @JavaCallback4JS
-                    public void test(@ParamResponseStatus("msg")String statusMsg,@Param("msg") String msg) {
+                    public void test(@ParamResponseStatus("msg")String statusMsg, @Param("msg") String msg) {
                         mResultView.setText(" 状态信息="+statusMsg+"  msg="+msg);
                     }
 

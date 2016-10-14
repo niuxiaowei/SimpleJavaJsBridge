@@ -1,4 +1,4 @@
-package com.bridge.jsbridge.exception;
+package com.simplejsjavabridge.lib.exception;
 
 /**
  * Created by niuxiaowei on 16/9/10.

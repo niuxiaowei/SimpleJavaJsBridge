@@ -1,12 +1,10 @@
 package com.bridge.view;
 
-import android.util.Log;
 
-import com.bridge.jsbridge.IJavaCallback2JS;
-import com.bridge.jsbridge.annotation.JavaCallback4JS;
-import com.bridge.jsbridge.annotation.InvokeJSInterface;
-import com.bridge.jsbridge.annotation.Param;
-import com.bridge.jsbridge.annotation.ParamCallback;
+import com.simplejsjavabridge.lib.IJavaCallback2JS;
+import com.simplejsjavabridge.lib.annotation.InvokeJSInterface;
+import com.simplejsjavabridge.lib.annotation.Param;
+import com.simplejsjavabridge.lib.annotation.ParamCallback;
 
 /**
  * Created by niuxiaowei on 16/8/28.

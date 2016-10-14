@@ -1,4 +1,4 @@
-package com.bridge.jsbridge;
+package com.simplejsjavabridge.lib;
 
 import android.net.Uri;
 import android.os.Handler;
@@ -8,10 +8,11 @@ import android.util.Log;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 
-import com.bridge.jsbridge.annotation.InvokeJSInterface;
-import com.bridge.jsbridge.annotation.JavaCallback4JS;
-import com.bridge.jsbridge.annotation.JavaInterface4JS;
-import com.bridge.jsbridge.exception.SimpleJSBridgeException;
+
+import com.simplejsjavabridge.lib.annotation.InvokeJSInterface;
+import com.simplejsjavabridge.lib.annotation.JavaCallback4JS;
+import com.simplejsjavabridge.lib.annotation.JavaInterface4JS;
+import com.simplejsjavabridge.lib.exception.SimpleJSBridgeException;
 
 import org.json.JSONObject;
 

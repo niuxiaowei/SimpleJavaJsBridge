@@ -1,4 +1,4 @@
-package com.bridge.jsbridge.annotation;
+package com.simplejsjavabridge.lib.annotation;
 
 import org.json.JSONArray;
 
