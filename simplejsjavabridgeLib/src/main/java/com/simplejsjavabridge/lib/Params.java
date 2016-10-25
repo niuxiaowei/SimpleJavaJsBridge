@@ -8,6 +8,7 @@ import com.simplejsjavabridge.lib.annotation.ParamCallback;
 import com.simplejsjavabridge.lib.annotation.ParamResponseStatus;
 import com.simplejsjavabridge.lib.exception.SimpleJSBridgeException;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,14 +16,16 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
+import java.util.Iterator;
 
 /**
  * 该类会把{@link Method}的用{@link Param},{@link ParamCallback},{@link ParamResponseStatus}这几个注解标注的param解析出来，
  * {@link Param}解析为{@link ParamItem},{@link ParamCallback}解析为{@link ParamCallbackItem},{@link ParamResponseStatus}
  * 解析为{@link ParamResponseStatusItem}。
  * <p>同时该类还有把一个json转化为参数值的功能，和把参数值转化为json的功能</p>
- *
+ * <p>
  * Created by niuxiaowei on 16/7/14.
  */
 public class Params {
@@ -38,6 +41,7 @@ public class Params {
 
     /**
      * 初始化方法
+     *
      * @param simpleJavaJsBridge
      */
     public static void init(SimpleJavaJsBridge simpleJavaJsBridge) {
@@ -124,11 +128,17 @@ public class Params {
      */
     private static class ParamItem extends BaseParamItem {
 
-        public boolean needConvert;
 
-        public ParamItem(String paramKey, Class paramClass, boolean needConvert) {
+        public ParamItem(String paramKey, Class paramClass) {
             super(paramClass, paramKey);
-            this.needConvert = needConvert;
+        }
+
+        protected void onReceiveKeyValue(RequestResponseBuilder requestResponseBuilder, String key, Object value) {
+            requestResponseBuilder.putValue(key, value);
+        }
+
+        protected JSONObject getJson(RequestResponseBuilder requestResponseBuilder) {
+            return requestResponseBuilder.getValues();
         }
 
         @Override
@@ -136,12 +146,12 @@ public class Params {
             if (requestResponseBuilder == null || requestResponseBuilder.getValues() == null) {
                 return null;
             }
-            JSONObject jsonObject = requestResponseBuilder.getValues();
+            JSONObject jsonObject = getJson(requestResponseBuilder);
             if (jsonObject != null) {
-                if (needConvert) {
+                if (!isObjectDirectPut2Json(paramType)) {
                     try {
                         JSONObject value = !TextUtils.isEmpty(paramKey) ? (JSONObject) jsonObject.opt(paramKey) : jsonObject;
-                        if(value == null){
+                        if (value == null) {
                             return null;
                         }
                         Object instance = paramType.newInstance();
@@ -174,75 +184,136 @@ public class Params {
             if (requestResponseBuilder == null || obj == null) {
                 return;
             }
-            /*需要进行转换*/
-            if (needConvert) {
-                JSONObject objectParamJson = null;
-                if (!TextUtils.isEmpty(paramKey)) {
-                    objectParamJson = new JSONObject();
+            if (!isObjectDirectPut2Json(obj)) {
+                JSONObject json = convertObjectFileds2Json(obj);
+                if (json == null) {
+                    return;
                 }
-
-                Class cl = obj.getClass();
-                Field[] fields = cl.getDeclaredFields();
-                for (Field field : fields
-                        ) {
-                    Param p = field.getAnnotation(Param.class);
-                    if (p != null) {
-                                                                        /*可以访问不可以访问的变量*/
-                        field.setAccessible(true);
-                        Object inst = null;
-                        try {
-                            inst = field.get(obj);
-                            if (inst != null) {
-                                if (objectParamJson != null) {
-
-                                    objectParamJson.put(p.value(), inst);
-                                } else {
-                                    requestResponseBuilder.putValue(p.value(), inst);
-                                }
-                            }
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                if (!TextUtils.isEmpty(paramKey)) {
+                    onReceiveKeyValue(requestResponseBuilder, paramKey, json);
+                } else {
+                    Iterator<String> iterator = json.keys();
+                    String key = null;
+                    while (iterator.hasNext()) {
+                        key = iterator.next();
+                        onReceiveKeyValue(requestResponseBuilder, key, json.opt(key));
                     }
                 }
-                if (objectParamJson != null) {
-                    requestResponseBuilder.putValue(paramKey, objectParamJson);
-                }
+
             } else {
-                requestResponseBuilder.putValue(paramKey, obj);
+                onReceiveKeyValue(requestResponseBuilder, paramKey, obj);
 
             }
         }
+
+        private JSONObject convertObjectFileds2Json(Object obj) {
+            JSONObject objectParamJson = null;
+
+
+            Class cl = obj.getClass();
+            Field[] fields = cl.getDeclaredFields();
+
+            /*说明当前类的不包含任何属性*/
+            if (fields.length == 0) {
+                return objectParamJson;
+            }
+
+            Object inst = null;
+            String jsonName = null;
+            /*属性用Param进行了标注*/
+            Param filedAnnoByParam = null;
+            for (Field field : fields
+                    ) {
+            /*final或static类型的属性或枚举类型中的枚举常量不解析*/
+                if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers()) || field.isEnumConstant()) {
+                    continue;
+                }
+                filedAnnoByParam = field.getAnnotation(Param.class);
+                if (filedAnnoByParam != null) {
+                    jsonName = filedAnnoByParam.value();                                                    /*可以访问不可以访问的变量*/
+                } else {
+                    jsonName = field.getName();
+                }
+
+                field.setAccessible(true);
+                try {
+                    inst = field.get(obj);
+                    if (inst != null) {
+                        if (objectParamJson == null) {
+                            objectParamJson = new JSONObject();
+                        }
+
+                        if (isObjectDirectPut2Json(inst)) {
+                            objectParamJson.put(jsonName, inst);
+                        } else {
+                        /*检查当前的属性是否还包含着属性*/
+                            JSONObject filedJson = convertObjectFileds2Json(inst);
+                            if (filedJson != null) {
+                                objectParamJson.put(jsonName, filedJson);
+                            }
+                        }
+
+
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return objectParamJson.length() == 0 ? null : objectParamJson;
+
+        }
+
+        /**
+         * 该对象是否可以直接往json中放
+         *
+         * @param type
+         * @return
+         */
+        private boolean isObjectDirectPut2Json(Class type) {
+            return (type == String.class || type.isPrimitive() || type == JSONArray.class || type == JSONObject.class);
+        }
+
+        /**
+         * 该对象是否可以直接往json中放
+         *
+         * @param object
+         * @return
+         */
+        private boolean isObjectDirectPut2Json(Object object) {
+            if (object instanceof String || object instanceof Integer || object instanceof Double || object instanceof Long ||
+                    object instanceof Boolean || object instanceof JSONArray || object instanceof JSONObject) {
+                return true;
+            }
+            return false;
+        }
+
+
     }
 
 
     /**
      * 对应{@link ParamResponseStatus}注解标注的参数
      */
-    private static class ParamResponseStatusItem extends BaseParamItem {
+    private static class ParamResponseStatusItem extends ParamItem {
 
         public ParamResponseStatusItem(Class paramClass, String paramKey) {
-            super(paramClass, paramKey);
+            super(paramKey, paramClass);
         }
 
         @Override
-        public Object convertJson2ParamValue(RequestResponseBuilder requestResponseBuilder) {
-            if (requestResponseBuilder == null || requestResponseBuilder.getResponseStatus() == null ) {
-                return null;
-            }
-            return requestResponseBuilder.getResponseStatus().opt(paramKey);
+        protected JSONObject getJson(RequestResponseBuilder requestResponseBuilder) {
+            return requestResponseBuilder.getResponseStatus();
         }
 
         @Override
-        public void convertParamValue2Json(RequestResponseBuilder requestResponseBuilder, Object obj) {
-
-            if (requestResponseBuilder == null || obj == null) {
-                return;
-            }
-            requestResponseBuilder.putResponseStatus(paramKey, obj);
+        protected void onReceiveKeyValue(RequestResponseBuilder requestResponseBuilder, String key, Object value) {
+            requestResponseBuilder.putResponseStatus(key, value);
         }
+
+
     }
 
     /**
@@ -256,7 +327,7 @@ public class Params {
         }
 
         @Override
-        public Object convertJson2ParamValue( RequestResponseBuilder requestResponseBuilder) {
+        public Object convertJson2ParamValue(RequestResponseBuilder requestResponseBuilder) {
             if (requestResponseBuilder == null || requestResponseBuilder.getCallbackId() == null) {
                 return null;
             }
@@ -289,7 +360,7 @@ public class Params {
             if (requestResponseBuilder == null || obj == null || !(obj instanceof IJavaCallback2JS)) {
                 return;
             }
-            requestResponseBuilder.setRequestCallback((IJavaCallback2JS)obj);
+            requestResponseBuilder.setRequestCallback((IJavaCallback2JS) obj);
 
         }
     }
@@ -311,21 +382,21 @@ public class Params {
                 BaseParamItem paramItem = null;
                 for (int i = 0; i < annotations.length; i++) {
                     Annotation annotation = null;
-                    if(annotations[i].length == 0){
-                        throw new IllegalArgumentException("方法的所有参数必须都得用"+Param.class.getSimpleName()+","+ParamCallback.class.getSimpleName()+","+ParamResponseStatus.class.getSimpleName()+" 中的任意一个注解进行标注");
+                    if (annotations[i].length == 0) {
+                        throw new IllegalArgumentException("方法的所有参数必须都得用" + Param.class.getSimpleName() + "," + ParamCallback.class.getSimpleName() + "," + ParamResponseStatus.class.getSimpleName() + " 中的任意一个注解进行标注");
 
                     }
                     for (int j = 0; j < annotations[i].length; j++) {
                         annotation = annotations[i][j];
                         if (annotation != null && annotation instanceof Param) {
                             Param paramKey = (Param) annotation;
-                            paramItem = new ParamItem(paramKey.value(), parameters[i], paramKey.needConvert());
+                            paramItem = new ParamItem(paramKey.value(), parameters[i]);
                             params.mParamItems[i] = paramItem;
                         } else if (annotation instanceof ParamCallback) {
                             paramItem = new ParamCallbackItem(parameters[i], null);
                             params.mParamItems[i] = paramItem;
                         } else if (annotation instanceof ParamResponseStatus) {
-                            ParamResponseStatus paramResponseStatus = (ParamResponseStatus)annotation;
+                            ParamResponseStatus paramResponseStatus = (ParamResponseStatus) annotation;
                             paramItem = new ParamResponseStatusItem(parameters[i], paramResponseStatus.value());
                             params.mParamItems[i] = paramItem;
                         }

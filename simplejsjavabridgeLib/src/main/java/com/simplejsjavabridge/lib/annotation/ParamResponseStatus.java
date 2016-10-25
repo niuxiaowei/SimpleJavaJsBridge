@@ -21,6 +21,33 @@ import java.lang.annotation.Target;
  *
  *
  * </pre>
+ * <p>例子:</p>
+ * <pre>
+ *     :@AllFiledsConvert
+ *     public enum ResponseStatus{
+ *         private int status;
+
+            private String msg;
+
+            ResponseStatus(int status, String msg) {
+                this.status = status;
+                this.msg = msg;
+            }
+
+            public int getStatus() {
+                return status;
+            }
+
+            public String getMsg() {
+                return msg;
+            }
+ *     }
+ *
+ *     public void receiveResponse(@ParamResponseStatus ResponseStatus responseStatus){
+ *
+ *     }
+ *
+ * </pre>
  *
  * Created by niuxiaowei on 2015/10/27.
  */
@@ -33,5 +60,7 @@ public @interface ParamResponseStatus {
      * responseStatus格式({status:1, msg:"ok"}。{@link #value()}就是status或msg这些key值
      * @return
      */
-    String value();
+    String value() default "";
+
+
 }

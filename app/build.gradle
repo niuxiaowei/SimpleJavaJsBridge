@@ -11,9 +11,23 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    signingConfigs {
+        config {
+            keyAlias 'SimpleJavaJs'
+            keyPassword 'simple'
+            storeFile file('simple.jks')
+            storePassword 'simple'
+        }
+
+    }
+
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.config
+            manifestPlaceholders = [APP_NAME: "SimpleJavaJs_release"]
+
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

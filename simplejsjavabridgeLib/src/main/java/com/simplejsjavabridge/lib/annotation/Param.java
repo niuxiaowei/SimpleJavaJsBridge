@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  *     最终把参数转化为{"content"}的json
  * </pre>
  * <p/>
- * <p>例子3:参数是{@link org.json.JSONObject}不可以直接存放的，{@link #value()}设置了值，{@link #needConvert()}的值必须设为true</p>
+ * <p>例子3:参数是{@link org.json.JSONObject}不可以直接存放的，{@link #value()}设置了值</p>
  * <pre>
  *
  *     class User{
@@ -43,12 +43,12 @@ import java.lang.annotation.Target;
  *     }
  *
  *     :@InvokeJSInterface("test")
- *     public void test(@Param(value="userInfo",needConvert=true) User userInfo)；
+ *     public void test(@Param(value="userInfo") User userInfo)；
  *
  *     最终把参数转化为{userInfo:{userId:"userId", name:"userName"}}的json
  * </pre>
  * <p/>
- * <p>例子4:参数是{@link org.json.JSONObject}不可以直接存放的，{@link #needConvert()}的值必须设为true</p>
+ * <p>例子4:参数是{@link org.json.JSONObject}不可以直接存放的</p>
  * <pre>
  *
  *     class User{
@@ -60,7 +60,7 @@ import java.lang.annotation.Target;
  *     }
  *
  *     :@InvokeJSInterface("test")
- *     public void test(@Param(needConvert=true) User userInfo)；
+ *     public void test(@Param User userInfo)；
  *
  *     最终把参数转化为{userId:"userId", name:"userName"}的json
  * </pre>
@@ -102,21 +102,11 @@ public @interface Param {
     /**
      * <pre>json中一般是以{key:value, key1:value1}的格式组织数据，</pre>
      * <p>{@link #value()}就代表key，key1这些值，@Param标注的参数或类的实例属性代表value或value1这些值；</p>
-     * {@link #value()}的值可以不设置，但这种情况是基于{@link #needConvert()}为true的条件下，即被{@link Param}标注的属性不能直接存放在json中；
+     * {@link #value()}的值可以不设置，这种情况主要基于该注解所标注的对象实例是{@link org.json.JSONObject}不可以直接进行存取的
      * 其他情况建议设置{@link #value()}的值
      *
      * @return
      */
     String value() default "";
 
-    /**
-     * <pre>json中一般是以{key:value, key1:value1}的格式组织数据，</pre>
-     * java中的{@link org.json.JSONObject}类可以存放 {@link org.json.JSONObject}, {@link JSONArray}, String, Boolean,
-     * Integer, Long, Double,  or {@code null}这些类，但是对于非以上的类，就得需要进行一些转换才可以往json中存放，
-     * 因此对于类的类型不是{@link org.json.JSONObject}可以存放的类型时，{@link #needConvert()}的值设为true，
-     * 同时该类需要被放入json中的实例属性要用{@link Param}进行标注,该类必须有一个无参构造函数
-     *
-     * @return
-     */
-    boolean needConvert() default false;
 }

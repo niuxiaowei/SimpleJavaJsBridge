@@ -133,7 +133,7 @@ public class WebViewFragment extends Fragment {
                 invokeJS.exam1(city, new IJavaCallback2JS() {
 
                     @JavaCallback4JS
-                    public void test(@Param(needConvert = true) IInvokeJS.City city1) {
+                    public void test(@Param IInvokeJS.City city1) {
                         mResultView.setText("js返回信息： cityName="+city1.cityName+"  cityProvince="+city1.cityProvince);
                     }
 
@@ -152,7 +152,7 @@ public class WebViewFragment extends Fragment {
                 invokeJS.exam2(city,"中国", new IJavaCallback2JS() {
 
                     @JavaCallback4JS
-                    public void test(@Param(value = "city",needConvert = true) IInvokeJS.City city1) {
+                    public void test(@Param(value = "city") IInvokeJS.City city1) {
                         mResultView.setText("js返回信息： cityName="+city1.cityName+"  cityProvince="+city1.cityProvince);
                     }
 
@@ -171,7 +171,7 @@ public class WebViewFragment extends Fragment {
                 invokeJS.exam3(city,"中国", new IJavaCallback2JS() {
 
                     @JavaCallback4JS
-                    public void test(@Param(needConvert = true) IInvokeJS.City city1) {
+                    public void test(@Param IInvokeJS.City city1) {
                         mResultView.setText("js返回信息： cityName="+city1.cityName+"  cityProvince="+city1.cityProvince);
                     }
 

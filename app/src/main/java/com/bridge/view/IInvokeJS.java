@@ -28,13 +28,13 @@ public interface IInvokeJS {
     void exam(@Param("test") String testContent, @Param("id") int id,@ParamCallback IJavaCallback2JS iJavaCallback2JS);
 
     @InvokeJSInterface("exam1")
-    void exam1(@Param(needConvert = true) City city, @ParamCallback IJavaCallback2JS iJavaCallback2JS);
+    void exam1(@Param City city, @ParamCallback IJavaCallback2JS iJavaCallback2JS);
 
     @InvokeJSInterface("exam2")
-    void exam2(@Param(needConvert = true) City city, @Param("contry") String  contry,@ParamCallback IJavaCallback2JS iJavaCallback2JS);
+    void exam2(@Param City city, @Param("contry") String  contry,@ParamCallback IJavaCallback2JS iJavaCallback2JS);
 
     @InvokeJSInterface("exam3")
-    void exam3(@Param(value = "city",needConvert = true) City city, @Param("contry") String  contry,@ParamCallback IJavaCallback2JS iJavaCallback2JS);
+    void exam3(@Param(value = "city") City city, @Param("contry") String  contry,@ParamCallback IJavaCallback2JS iJavaCallback2JS);
 
     @InvokeJSInterface("exam4")
     void exam4(@ParamCallback IJavaCallback2JS iJavaCallback2JS);
